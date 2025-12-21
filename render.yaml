@@ -5,7 +5,7 @@ services:
     env: node
     plan: free
     buildCommand: npm install && npx turbo run build --filter=api
-    startCommand: node apps/api/dist/main.js
+    startCommand: cd apps/api && npx prisma migrate deploy && npx prisma db seed && node dist/main.js
     envVars:
       - key: PORT
         value: 10000

@@ -40,7 +40,8 @@
     "helmet": "^7.0.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
-    "@repo/shared": "*"
+    "@repo/shared": "*",
+    "ts-node": "^10.9.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
