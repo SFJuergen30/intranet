@@ -1,0 +1,132 @@
+[debug] [2025-12-21T22:00:32.245Z] ----------------------------------------------------------------------
+[debug] [2025-12-21T22:00:32.247Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\sfjue\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only hosting
+[debug] [2025-12-21T22:00:32.247Z] CLI Version:   15.1.0
+[debug] [2025-12-21T22:00:32.248Z] Platform:      win32
+[debug] [2025-12-21T22:00:32.248Z] Node Version:  v22.16.0
+[debug] [2025-12-21T22:00:32.248Z] Time:          Sun Dec 21 2025 17:00:32 GMT-0500 (hora estándar de Perú)
+[debug] [2025-12-21T22:00:32.248Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-12-21T22:00:33.804Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-21T22:00:33.804Z] > authorizing via signed-in user (juergensf30@gmail.com)
+[debug] [2025-12-21T22:00:33.805Z] [iam] checking project intranet-bw-2025 for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2025-12-21T22:00:33.806Z] Checked if tokens are valid: true, expires at: 1766357939514
+[debug] [2025-12-21T22:00:33.806Z] Checked if tokens are valid: true, expires at: 1766357939514
+[debug] [2025-12-21T22:00:33.807Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/intranet-bw-2025:testIamPermissions [none]
+[debug] [2025-12-21T22:00:33.807Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/intranet-bw-2025:testIamPermissions x-goog-quota-user=projects/intranet-bw-2025
+[debug] [2025-12-21T22:00:33.807Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/intranet-bw-2025:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2025-12-21T22:00:34.859Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/intranet-bw-2025:testIamPermissions 200
+[debug] [2025-12-21T22:00:34.860Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/intranet-bw-2025:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2025-12-21T22:00:34.860Z] Checked if tokens are valid: true, expires at: 1766357939514
+[debug] [2025-12-21T22:00:34.860Z] Checked if tokens are valid: true, expires at: 1766357939514
+[debug] [2025-12-21T22:00:34.861Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/intranet-bw-2025 [none]
+[debug] [2025-12-21T22:00:35.779Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/intranet-bw-2025 200
+[debug] [2025-12-21T22:00:35.779Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/intranet-bw-2025 {"projectId":"intranet-bw-2025","projectNumber":"905266245248","displayName":"Black White Intranet","name":"projects/intranet-bw-2025","resources":{"hostingSite":"intranet-bw-2025"},"state":"ACTIVE","etag":"1_5aaebe1f-7614-45cc-8844-0a1331074a5f"}
+[info] 
+   Thank you for trying our early preview of Next.js support on Firebase Hosting.
+   During the preview, support is best-effort and breaking changes can be expected. Proceed with caution.
+
+   Documentation: https://firebase.google.com/docs/hosting/frameworks/nextjs
+   File a bug: https://github.com/firebase/firebase-tools/issues/new?template=bug_report.md
+   Submit a feature request: https://github.com/firebase/firebase-tools/issues/new?template=feature_request.md
+
+   We'd love to learn from you. Express your interest in helping us shape the future of Firebase Hosting: https://goo.gle/41enW5X
+
+[debug] [2025-12-21T22:00:45.069Z] Checked if tokens are valid: true, expires at: 1766357939514
+[debug] [2025-12-21T22:00:45.069Z] Checked if tokens are valid: true, expires at: 1766357939514
+[debug] [2025-12-21T22:00:45.069Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/intranet-bw-2025/sites/intranet-bw-2025 [none]
+[debug] [2025-12-21T22:00:46.281Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/intranet-bw-2025/sites/intranet-bw-2025 200
+[debug] [2025-12-21T22:00:46.281Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/intranet-bw-2025/sites/intranet-bw-2025 {"name":"projects/intranet-bw-2025/sites/intranet-bw-2025","defaultUrl":"https://intranet-bw-2025.web.app","type":"DEFAULT_SITE"}
+[info]   ▲ Next.js 15.0.0
+
+[info]   - Environments: .env
+
+
+[info]    Creating an optimized production build ...
+
+[info]  ✓ Compiled successfully
+
+[info]    Linting and checking validity of types ...
+
+[info] Failed to compile.
+
+
+[info] ./app/(dashboard)/admin/users/page.tsx:72:83
+Type error: 'error' is of type 'unknown'.
+
+  70 |     },
+  71 |     onError: (error) => {
+> 72 |         alert("Error creating user: " + (error as any).response?.data?.message || error.message);
+     |                                                                                   ^
+  73 |     }
+  74 |   });
+  75 |
+
+[debug] [2025-12-21T22:01:17.600Z] Error: ENOENT: no such file or directory, open 'C:\Users\sfjue\OneDrive\Desktop\intranetBW\apps\web\.next\export-marker.json'
+[error] 
+[error] Error: An unexpected error has occurred.
+[debug] [2025-12-21T22:01:38.323Z] ----------------------------------------------------------------------
+[debug] [2025-12-21T22:01:38.326Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\sfjue\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only hosting --debug
+[debug] [2025-12-21T22:01:38.326Z] CLI Version:   15.1.0
+[debug] [2025-12-21T22:01:38.326Z] Platform:      win32
+[debug] [2025-12-21T22:01:38.326Z] Node Version:  v22.16.0
+[debug] [2025-12-21T22:01:38.326Z] Time:          Sun Dec 21 2025 17:01:38 GMT-0500 (hora estándar de Perú)
+[debug] [2025-12-21T22:01:38.327Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-12-21T22:01:39.903Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-21T22:01:39.904Z] > authorizing via signed-in user (juergensf30@gmail.com)
+[debug] [2025-12-21T22:01:39.905Z] [iam] checking project intranet-bw-2025 for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2025-12-21T22:01:39.907Z] Checked if tokens are valid: true, expires at: 1766357939514
+[debug] [2025-12-21T22:01:39.908Z] Checked if tokens are valid: true, expires at: 1766357939514
+[debug] [2025-12-21T22:01:39.909Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/intranet-bw-2025:testIamPermissions [none]
+[debug] [2025-12-21T22:01:39.909Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/intranet-bw-2025:testIamPermissions x-goog-quota-user=projects/intranet-bw-2025
+[debug] [2025-12-21T22:01:39.909Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/intranet-bw-2025:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2025-12-21T22:01:40.950Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/intranet-bw-2025:testIamPermissions 200
+[debug] [2025-12-21T22:01:40.951Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/intranet-bw-2025:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2025-12-21T22:01:40.952Z] Checked if tokens are valid: true, expires at: 1766357939514
+[debug] [2025-12-21T22:01:40.952Z] Checked if tokens are valid: true, expires at: 1766357939514
+[debug] [2025-12-21T22:01:40.952Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/intranet-bw-2025 [none]
+[debug] [2025-12-21T22:01:41.822Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/intranet-bw-2025 200
+[debug] [2025-12-21T22:01:41.822Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/intranet-bw-2025 {"projectId":"intranet-bw-2025","projectNumber":"905266245248","displayName":"Black White Intranet","name":"projects/intranet-bw-2025","resources":{"hostingSite":"intranet-bw-2025"},"state":"ACTIVE","etag":"1_5aaebe1f-7614-45cc-8844-0a1331074a5f"}
+[info] 
+   Thank you for trying our early preview of Next.js support on Firebase Hosting.
+   During the preview, support is best-effort and breaking changes can be expected. Proceed with caution.
+
+   Documentation: https://firebase.google.com/docs/hosting/frameworks/nextjs
+   File a bug: https://github.com/firebase/firebase-tools/issues/new?template=bug_report.md
+   Submit a feature request: https://github.com/firebase/firebase-tools/issues/new?template=feature_request.md
+
+   We'd love to learn from you. Express your interest in helping us shape the future of Firebase Hosting: https://goo.gle/41enW5X
+
+[debug] [2025-12-21T22:01:50.914Z] Checked if tokens are valid: true, expires at: 1766357939514
+[debug] [2025-12-21T22:01:50.915Z] Checked if tokens are valid: true, expires at: 1766357939514
+[debug] [2025-12-21T22:01:50.915Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/intranet-bw-2025/sites/intranet-bw-2025 [none]
+[debug] [2025-12-21T22:01:51.892Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/intranet-bw-2025/sites/intranet-bw-2025 200
+[debug] [2025-12-21T22:01:51.893Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/intranet-bw-2025/sites/intranet-bw-2025 {"name":"projects/intranet-bw-2025/sites/intranet-bw-2025","defaultUrl":"https://intranet-bw-2025.web.app","type":"DEFAULT_SITE"}
+[info]   ▲ Next.js 15.0.0
+
+[info]   - Environments: .env
+
+
+[info]    Creating an optimized production build ...
+
+[info]  ✓ Compiled successfully
+
+[info]    Linting and checking validity of types ...
+
+[info] Failed to compile.
+
+
+[info] ./app/(dashboard)/admin/users/page.tsx:72:83
+Type error: 'error' is of type 'unknown'.
+
+  70 |     },
+  71 |     onError: (error) => {
+> 72 |         alert("Error creating user: " + (error as any).response?.data?.message || error.message);
+     |                                                                                   ^
+  73 |     }
+  74 |   });
+  75 |
+
+[debug] [2025-12-21T22:02:07.799Z] Error: ENOENT: no such file or directory, open 'C:\Users\sfjue\OneDrive\Desktop\intranetBW\apps\web\.next\export-marker.json'
+[error] 
+[error] Error: An unexpected error has occurred.

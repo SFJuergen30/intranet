@@ -24,11 +24,11 @@ services:
     buildCommand: npm install && npx turbo run build --filter=web
     startCommand: npm start --prefix apps/web
     envVars:
-      - key: NEXT_PUBLIC_API_URL
+      - key: BACKEND_INTERNAL_URL
         fromService:
           type: web
           name: intranet-api
-          property: url
+          property: hostport
 
 databases:
   # 3. Database (PostgreSQL)
