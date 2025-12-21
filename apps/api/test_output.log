@@ -1,0 +1,19 @@
+PASS test/rbac.e2e-spec.ts
+  RBAC & Security (e2e)
+    User Management /users
+      √ Admin should be able to create a user (88 ms)
+      √ Teacher should NOT be able to create a user (403) (5 ms)
+      √ Student should NOT be able to create a user (403) (4 ms)
+      √ Public should NOT be able to create a user (401) (3 ms)
+    User Profile Access /users/:id
+      √ Admin can view Student1 profile (12 ms)
+      √ Student1 can view own profile (8 ms)
+      √ Student1 can NOT view Student2 profile (403) (4 ms)
+    Data Privacy (Grades)
+      √ Student1 should NOT see grades of Student2 (7 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       8 passed, 8 total
+Snapshots:   0 total
+Time:        4.731 s
+Ran all test suites matching /test\\rbac.e2e-spec.ts/i.

@@ -1,0 +1,17 @@
+FAIL test/rbac.e2e-spec.ts
+  ● Test suite failed to run
+
+    [96mtest/rbac.e2e-spec.ts[0m:[93m46[0m:[93m75[0m - [91merror[0m[90m TS2339: [0mProperty 'studentProfile' does not exist on type '{ id: string; email: string; passwordHash: string; fullName: string; role: Role; isActive: boolean; createdAt: Date; updatedAt: Date; }'.
+
+    [7m46[0m     const e1 = await prisma.enrollment.findFirst({ where: { studentId: s1.studentProfile?.id || (await prisma.studentProfile.findUnique({where:{userId: s1.id}})).id } });
+    [7m  [0m [91m                                                                          ~~~~~~~~~~~~~~[0m
+    [96mtest/rbac.e2e-spec.ts[0m:[93m49[0m:[93m75[0m - [91merror[0m[90m TS2339: [0mProperty 'studentProfile' does not exist on type '{ id: string; email: string; passwordHash: string; fullName: string; role: Role; isActive: boolean; createdAt: Date; updatedAt: Date; }'.
+
+    [7m49[0m     const e2 = await prisma.enrollment.findFirst({ where: { studentId: s2.studentProfile?.id || (await prisma.studentProfile.findUnique({where:{userId: s2.id}})).id } });
+    [7m  [0m [91m                                                                          ~~~~~~~~~~~~~~[0m
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        2.932 s
+Ran all test suites matching /test\\rbac.e2e-spec.ts/i.
