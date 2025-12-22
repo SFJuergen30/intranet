@@ -1,9 +1,5 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import * as cookieParser from 'cookie-parser';
-import helmet from 'helmet';
+import { PrismaService } from './prisma/prisma.service'; // Ensure this exists or access prisma from AppModule
+import { seedDatabase } from './utils/seeder';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -28,6 +24,10 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
+
+  // Auto-Seed
+  const prismaService = app.get(PrismaService);
+  await seedDatabase(prismaService);
 
   const port = process.env.PORT || 3001;
   await app.listen(port, '0.0.0.0');
