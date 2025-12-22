@@ -47,6 +47,11 @@ async function fetchUsers() {
   return data;
 }
 
+async function createUser(newUser: RegisterDto) {
+  const { data } = await api.post("/users", newUser);
+  return data;
+}
+
 async function deleteUser(id: string) {
   const { data } = await api.delete(`/users/${id}`);
   return data;

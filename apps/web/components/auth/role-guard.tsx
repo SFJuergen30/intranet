@@ -28,11 +28,8 @@ export function RoleGuard({ children, allowedRoles }: RoleGuardProps) {
   if (isLoading || !user || !allowedRoles.includes(user.role)) {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-black text-white">
-      <div className="flex h-screen w-full flex-col items-center justify-center bg-black gap-4">
+      <div className="flex h-screen w-full items-center justify-center bg-black">
         <Loader2 className="h-8 w-8 animate-spin text-[#25D366]" />
-        <p className="text-zinc-500 text-xs font-mono">
-          Debug: {JSON.stringify({ isLoading, role: user?.role, allowed: allowedRoles, match: user && allowedRoles.includes(user.role) })}
-        </p>
       </div>
       </div>
     );
