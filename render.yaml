@@ -5,7 +5,7 @@ services:
     env: node
     plan: free
     buildCommand: npm install --include=dev && npx turbo run build --filter=api...
-    startCommand: cd apps/api && node dist/main.js
+    startCommand: cd apps/api && npx prisma migrate deploy && node dist/main.js
     envVars:
       - key: NODE_OPTIONS
         value: "--max-old-space-size=4096"
