@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, UseGuards, Put, Query, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards, Put, Query, Request, Delete } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { RegisterDto } from '@repo/shared';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
@@ -27,5 +27,11 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   findOne(@Param('id') id: string, @Request() req) {
     return this.usersService.findOne(id, req.user.id, req.user.role);
+  }
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  remove(@Param('id') id: string) {
+    return this.usersService.remove(id);
   }
 }

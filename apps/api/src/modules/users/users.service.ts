@@ -90,4 +90,11 @@ export class UsersService {
           }
       })
   }
+  async remove(id: string) {
+      // Prisma usually handles cascading if configured, but we can rely on foreign key constraints
+      // to error if not. 
+      return this.prisma.user.delete({
+          where: { id }
+      });
+  }
 }

@@ -40,15 +40,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 
 async function fetchUsers() {
   const { data } = await api.get("/users");
   return data;
 }
 
-async function createUser(newUser: RegisterDto) {
-  const { data } = await api.post("/users", newUser);
+async function deleteUser(id: string) {
+  const { data } = await api.delete(`/users/${id}`);
   return data;
 }
 
@@ -69,7 +69,17 @@ export default function UsersPage() {
       form.reset();
     },
     onError: (error) => {
-        alert("Error creating user: " + (error as any).response?.data?.message || error.message);
+      alert("Error creating user: " + ((error as any).response?.data?.message || (error as any).message));
+    }
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+    onError: (error) => {
+      alert("Error deleting user: " + ((error as any).response?.data?.message || (error as any).message));
     }
   });
 
@@ -85,6 +95,12 @@ export default function UsersPage() {
 
   const onSubmit = (data: RegisterDto) => {
     mutation.mutate(data);
+  };
+
+  const handleDelete = (id: string) => {
+    if (confirm("¿Estás seguro de que quieres eliminar este usuario? Esta acción no se puede deshacer.")) {
+      deleteMutation.mutate(id);
+    }
   };
 
   return (
@@ -181,12 +197,13 @@ export default function UsersPage() {
               <TableHead className="text-zinc-400">Email</TableHead>
               <TableHead className="text-zinc-400">Rol</TableHead>
               <TableHead className="text-zinc-400">Estado</TableHead>
+              <TableHead className="text-zinc-400 text-right">Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
                <TableRow>
-                 <TableCell colSpan={4} className="text-center h-24">Cargando...</TableCell>
+                 <TableCell colSpan={5} className="text-center h-24">Cargando...</TableCell>
                </TableRow>
             ) : users?.map((user: any) => (
               <TableRow key={user.id} className="border-zinc-800 hover:bg-zinc-900">
@@ -203,6 +220,16 @@ export default function UsersPage() {
                 </TableCell>
                 <TableCell>
                     {user.isActive ? <span className="text-green-500">Activado</span> : <span className="text-red-500">Desactivado</span>}
+                </TableCell>
+                <TableCell className="text-right">
+                   <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      onClick={() => handleDelete(user.id)}
+                      className="text-red-500 hover:text-red-400 hover:bg-red-950/20"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                   </Button>
                 </TableCell>
               </TableRow>
             ))}
