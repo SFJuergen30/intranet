@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards, Request, Patch, Delete } from '@nestjs/common';
 import { CoursesService } from './courses.service';
 import { CreateCourseDto, CreateCohortDto } from '@repo/shared';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
@@ -20,6 +20,19 @@ export class CoursesController {
   @Get()
   findAllCourses() {
     return this.coursesService.findAllCourses();
+    return this.coursesService.findAllCourses();
+  }
+
+  @Patch(':id')
+  @Roles('ADMIN')
+  updateCourse(@Param('id') id: string, @Body() updateDto: Partial<CreateCourseDto>) {
+    return this.coursesService.updateCourse(id, updateDto);
+  }
+
+  @Delete(':id')
+  @Roles('ADMIN')
+  removeCourse(@Param('id') id: string) {
+    return this.coursesService.removeCourse(id);
   }
 
   // --- Cohort Routes ---

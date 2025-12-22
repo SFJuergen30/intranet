@@ -31,6 +31,23 @@ export class CoursesService {
     });
     if (!course) throw new NotFoundException('Course not found');
     return course;
+    return course;
+  }
+
+  async updateCourse(id: string, data: Partial<CreateCourseDto>) {
+      return this.prisma.course.update({
+          where: { id },
+          data: {
+              title: data.title,
+              type: data.type as any,
+              description: data.description,
+              imageUrl: data.imageUrl,
+          }
+      });
+  }
+
+  async removeCourse(id: string) {
+      return this.prisma.course.delete({ where: { id } });
   }
 
   // --- Cohorts ---
