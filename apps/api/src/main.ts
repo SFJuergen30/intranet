@@ -1,4 +1,10 @@
-import { PrismaService } from './prisma/prisma.service'; // Ensure this exists or access prisma from AppModule
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as cookieParser from 'cookie-parser';
+import helmet from 'helmet';
+import { PrismaService } from './prisma/prisma.service';
 import { seedDatabase } from './utils/seeder';
 
 async function bootstrap() {
