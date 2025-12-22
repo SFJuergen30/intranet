@@ -77,6 +77,10 @@ model StudentProfile {
   address          String?
   emergencyContact String?
   photoUrl         String?
+  
+  scheduleUrl        String?
+  paymentScheduleUrl String?
+  resourceLinks      Json?
 
   enrollments Enrollment[]
 }

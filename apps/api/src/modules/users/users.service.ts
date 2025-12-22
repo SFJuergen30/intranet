@@ -28,7 +28,14 @@ export class UsersService {
       if (data.role === 'TEACHER') {
         await tx.teacherProfile.create({ data: { userId: user.id } });
       } else if (data.role === 'STUDENT') {
-        await tx.studentProfile.create({ data: { userId: user.id } });
+        await tx.studentProfile.create({ 
+          data: { 
+            userId: user.id,
+            scheduleUrl: data.scheduleUrl || null,
+            paymentScheduleUrl: data.paymentScheduleUrl || null,
+            resourceLinks: data.resourceLinks ? (data.resourceLinks as any) : undefined
+          } 
+        });
       }
       
       // Log creation

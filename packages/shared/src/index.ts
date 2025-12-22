@@ -17,6 +17,9 @@ export const RegisterSchema = z.object({
   password: z.string().min(6),
   fullName: z.string().min(3),
   role: RoleEnum,
+  scheduleUrl: z.string().url().optional().or(z.literal('')),
+  paymentScheduleUrl: z.string().url().optional().or(z.literal('')),
+  resourceLinks: z.array(z.object({ name: z.string(), url: z.string().url() })).optional(),
 });
 
 // --- User Schemas ---

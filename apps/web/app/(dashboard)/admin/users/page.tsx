@@ -185,6 +185,68 @@ export default function UsersPage() {
                     </FormItem>
                   )}
                 />
+                
+                {form.watch("role") === "STUDENT" && (
+                  <div className="space-y-4 border-t border-zinc-800 pt-4 mt-4">
+                    <h3 className="font-semibold text-lg">Información del Estudiante</h3>
+                     <FormField
+                      control={form.control}
+                      name="scheduleUrl"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>URL del Horario (Imagen/PDF)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="https://..." {...field} className="bg-zinc-900 border-zinc-800" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="paymentScheduleUrl"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>URL Cronograma de Pagos</FormLabel>
+                          <FormControl>
+                            <Input placeholder="https://..." {...field} className="bg-zinc-900 border-zinc-800" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <div className="space-y-2">
+                        <FormLabel>Recursos (PDFs)</FormLabel>
+                        {[0, 1, 2].map((i) => (
+                            <div key={i} className="flex gap-2">
+                                <Input 
+                                    placeholder={`Nombre Recurso ${i+1}`} 
+                                    className="bg-zinc-900 border-zinc-800 w-1/3"
+                                    onChange={(e) => {
+                                        const current = form.getValues("resourceLinks") || [];
+                                        if(!current[i]) current[i] = { name: "", url: "" };
+                                        current[i].name = e.target.value;
+                                        form.setValue("resourceLinks", current);
+                                    }}
+                                />
+                                <Input 
+                                    placeholder={`URL Recurso ${i+1}`} 
+                                    className="bg-zinc-900 border-zinc-800 flex-1"
+                                    onChange={(e) => {
+                                        const current = form.getValues("resourceLinks") || [];
+                                        if(!current[i]) current[i] = { name: "", url: "" };
+                                        current[i].url = e.target.value;
+                                        form.setValue("resourceLinks", current);
+                                    }}
+                                />
+                            </div>
+                        ))}
+                        <p className="text-xs text-zinc-500">Links a Google Drive, Dropbox, etc.</p>
+                    </div>
+                  </div>
+                )}
+
                 <Button type="submit" className="w-full bg-[#25D366] text-black hover:bg-[#1fb554]">
                   {mutation.isLoading ? "Guardando..." : "Guardar"}
                 </Button>

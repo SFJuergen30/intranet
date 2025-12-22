@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useAuth } from "@/context/auth-context";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, BookOpen, GraduationCap, CalendarCheck, LogOut, TrendingUp, Library } from "lucide-react";
+import { LayoutDashboard, Users, BookOpen, GraduationCap, CalendarCheck, LogOut, TrendingUp, Library, CreditCard } from "lucide-react";
 
 export function Sidebar() {
   const { user, logout } = useAuth();
@@ -33,6 +33,7 @@ export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
     { name: "Mi Progreso", href: "/student/progress", icon: TrendingUp, roles: ["STUDENT"] },
     { name: "Recursos", href: "/student/resources", icon: Library, roles: ["STUDENT"] },
     { name: "Horario", href: "/student/schedule", icon: CalendarCheck, roles: ["STUDENT"] },
+    { name: "Pagos", href: "/student/payments", icon: CreditCard, roles: ["STUDENT"] },
   ];
 
   const filteredLinks = links.filter(link => user && link.roles.includes(user.role));
