@@ -33,6 +33,16 @@ services:
           type: web
           name: intranet-api
           property: hostport
+      - key: API_URL
+        fromService:
+          type: web
+          name: intranet-api
+          property: url
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          type: web
+          name: intranet-api
+          property: url
       - key: NPM_CONFIG_PRODUCTION
         value: "false"
 
