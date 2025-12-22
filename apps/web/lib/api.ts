@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: typeof window !== 'undefined' ? '/api' : 'http://localhost:3001',
+  baseURL: typeof window !== 'undefined' ? '/api' : (process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'),
   withCredentials: true, // Important for cookies
 });
 

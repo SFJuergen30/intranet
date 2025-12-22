@@ -5,9 +5,10 @@ const nextConfig = {
     domains: ["res.cloudinary.com"],
   },
   async rewrites() {
-    const backendUrl = process.env.BACKEND_INTERNAL_URL
-      ? `http://${process.env.BACKEND_INTERNAL_URL}`
-      : "http://localhost:3001";
+    const backendUrl =
+      process.env.API_URL ||
+      process.env.NEXT_PUBLIC_API_URL ||
+      "http://localhost:3001";
 
     return [
       {
