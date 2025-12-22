@@ -10,6 +10,17 @@ export function Sidebar() {
   const { user, logout } = useAuth();
   const pathname = usePathname();
 
+  return (
+    <div className="flex h-screen w-64 flex-col justify-between border-r border-zinc-800 bg-zinc-950 p-4">
+      <SidebarContent />
+    </div>
+  );
+}
+
+export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
+  const { user, logout } = useAuth();
+  const pathname = usePathname();
+
   const links = [
     { name: "Dashboard", href: "/admin", icon: LayoutDashboard, roles: ["ADMIN"] },
     { name: "Usuarios", href: "/admin/users", icon: Users, roles: ["ADMIN"] },
@@ -21,15 +32,18 @@ export function Sidebar() {
     { name: "Mis Notas", href: "/student/grades", icon: GraduationCap, roles: ["STUDENT"] },
     { name: "Mi Progreso", href: "/student/progress", icon: TrendingUp, roles: ["STUDENT"] },
     { name: "Recursos", href: "/student/resources", icon: Library, roles: ["STUDENT"] },
+    { name: "Horario", href: "/student/schedule", icon: CalendarCheck, roles: ["STUDENT"] },
   ];
 
   const filteredLinks = links.filter(link => user && link.roles.includes(user.role));
 
   return (
-    <div className="flex h-screen w-64 flex-col justify-between border-r border-zinc-800 bg-zinc-950 p-4">
+    <>
       <div>
         <div className="mb-8 flex items-center gap-2 px-2">
-           <div className="h-8 w-8 bg-white rounded-full"></div>
+           <div className="h-8 w-8 bg-white rounded-full flex items-center justify-center">
+              <span className="text-black font-bold text-xs">BW</span>
+           </div>
            <span className="text-lg font-bold text-white">B&W Intranet</span>
         </div>
         
@@ -41,6 +55,7 @@ export function Sidebar() {
               <Link
                 key={link.href}
                 href={link.href}
+                onClick={onNavigate}
                 className={cn(
                   "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                   isActive 
@@ -62,13 +77,16 @@ export function Sidebar() {
             <p className="text-sm font-medium text-white truncate">{user?.email}</p>
         </div>
         <button
-          onClick={() => logout()}
+          onClick={() => {
+             logout();
+             if (onNavigate) onNavigate();
+          }}
           className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-red-500 hover:bg-zinc-800 transition-colors"
         >
           <LogOut className="h-4 w-4" />
           Cerrar Sesión
         </button>
       </div>
-    </div>
+    </>
   );
 }
