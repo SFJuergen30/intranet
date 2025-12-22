@@ -7,7 +7,14 @@ async function bootstrap() {
   // Security
   app.use(helmet());
   app.enableCors({
-    origin: 'http://localhost:3000', // Web App
+    origin: (origin, callback) => {
+      // Allow localhost or Render domains
+      if (!origin || origin.match(/^http:\/\/localhost/) || origin.match(/\.onrender\.com$/)) {
+        callback(null, true);
+      } else {
+        callback(null, false);
+      }
+    },
     credentials: true,
   });
   app.use(cookieParser());
@@ -25,9 +32,13 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
 
-  // Auto-Seed
-  const prismaService = app.get(PrismaService);
-  await seedDatabase(prismaService);
+  // Auto-Seed (Fail-Safe)
+  try {
+    const prismaService = app.get(PrismaService);
+    await seedDatabase(prismaService);
+  } catch (err) {
+    console.error('SEEDING FAILED (NON-FATAL):', err);
+  }
 
   const port = process.env.PORT || 3001;
   await app.listen(port, '0.0.0.0');
