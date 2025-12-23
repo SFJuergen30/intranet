@@ -64,6 +64,24 @@ export class CoursesService {
     });
   }
 
+  async updateCohort(id: string, data: Partial<CreateCohortDto>) {
+      return this.prisma.cohort.update({
+          where: { id },
+          data: {
+              courseId: data.courseId,
+              campusId: data.campusId,
+              name: data.name,
+              startDate: data.startDate ? new Date(data.startDate) : undefined,
+              schedule: data.schedule,
+              capacity: data.capacity,
+          }
+      });
+  }
+
+  async removeCohort(id: string) {
+      return this.prisma.cohort.delete({ where: { id } });
+  }
+
   async findCohorts(query: { teacherId?: string }) {
       if (query.teacherId) {
           // Find cohorts assigned to this teacher

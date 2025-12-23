@@ -42,6 +42,18 @@ export class CoursesController {
     return this.coursesService.createCohort(createDto);
   }
 
+  @Patch('cohorts/:id')
+  @Roles('ADMIN')
+  updateCohort(@Param('id') id: string, @Body() updateDto: Partial<CreateCohortDto>) {
+      return this.coursesService.updateCohort(id, updateDto);
+  }
+
+  @Delete('cohorts/:id')
+  @Roles('ADMIN')
+  removeCohort(@Param('id') id: string) {
+      return this.coursesService.removeCohort(id);
+  }
+
   @Get('cohorts')
   findCohorts(@Request() req) {
       if (req.user.role === 'TEACHER') {

@@ -3,225 +3,174 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/lib/api";
-import { CreateEnrollmentDto, CreateEnrollmentSchema } from "@repo/shared";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import { RoleGuard } from "@/components/auth/role-guard";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import {
-  Form, FormControl, FormField, FormItem, FormLabel, FormMessage
-} from "@/components/ui/form";
-import {
-    Select, SelectContent, SelectItem, SelectTrigger, SelectValue
-} from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Plus, UserPlus } from "lucide-react";
+import { format } from "date-fns";
 
-// --- Fetchers ---
-async function fetchStudents() {
-    const { data } = await api.get("/users?role=STUDENT");
-    return data;
-}
+const EnrollmentSchema = z.object({
+  studentId: z.string().min(1, "Selecciona un estudiante"),
+  cohortId: z.string().min(1, "Selecciona un cohorte"),
+});
 
-async function fetchCohorts() {
-    const { data } = await api.get("/courses/cohorts");
-    return data; 
-}
+type EnrollmentFormValues = z.infer<typeof EnrollmentSchema>;
 
-async function fetchCohortEnrollments(cohortId: string) {
-    if (!cohortId) return [];
-    const { data } = await api.get(`/enrollments/cohort/${cohortId}`);
-    // We need to know if certificate exists. 
-    // Does enrollment endpoint return it? Service findByCohort includes student. 
-    // I should check EnrollmentsService.findByCohort if it includes certificate.
-    // Assuming backend modification or separate fetch. 
-    // For now, let's assume we can fetch certificate status for the row or issue blindly (backend checks duplicate).
-    return data;
-}
+export default function AdminEnrollmentsPage() {
+  const queryClient = useQueryClient();
+  const [isOpen, setIsOpen] = useState(false);
 
-// --- Mutators ---
-async function createEnrollment(data: CreateEnrollmentDto) {
-    const { data: res } = await api.post("/enrollments", data);
-    return res;
-}
+  // Fetch Enrollments
+  const { data: enrollments, isLoading } = useQuery({
+    queryKey: ["enrollments"],
+    queryFn: async () => (await api.get("/enrollments")).data,
+  });
 
-async function issueCertificate(enrollmentId: string) {
-    const { data } = await api.post("/certificates/issue", { enrollmentId });
-    return data;
-}
+  // Fetch Sudents (We need a way to filter only students, or the backend should provide it)
+  // Currently /users might return everyone. Should we filter on client or backend? Client for now if list is small.
+  const { data: users } = useQuery({
+    queryKey: ["users"],
+    queryFn: async () => (await api.get("/users")).data,
+  });
+  const students = users?.filter((u: any) => u.role === "STUDENT" && u.studentProfile?.id) || [];
 
-// Manage Certs (Revoke not requested explicitly in UI by me just now but user asked. I'll stick to Issue for MVP or both)
-// User asked "emitir/revocar".
-async function revokeCertificate(certId: string) {
-    const { data } = await api.post(`/certificates/revoke/${certId}`);
-    return data;
-}
+  // Fetch Cohorts
+  const { data: cohorts } = useQuery({
+    queryKey: ["cohorts"],
+    queryFn: async () => (await api.get("/courses/cohorts")).data,
+  });
 
-// I need to fetch certificates for the enrollment to know status?
-// Or I can just try to issue and see error.
-// Better: get certificate info.
-// I'll add a helper to fetch certs for the cohort enrollments? 
-// Or update `EnrollmentsService.findByCohort` to include Certificate.
-// I'll update `EnrollmentsService` quickly? No, I'll assume blind issue for MVP speed, checking error.
 
-export default function EnrollmentsPage() {
-    const queryClient = useQueryClient();
-    const { data: students, isLoading: loadingStudents } = useQuery({ queryKey: ["students"], queryFn: fetchStudents });
-    const { data: cohorts, isLoading: loadingCohorts } = useQuery({ queryKey: ["adminCohorts"], queryFn: fetchCohorts });
+  const form = useForm<EnrollmentFormValues>({
+    resolver: zodResolver(EnrollmentSchema),
+    defaultValues: { studentId: "", cohortId: "" },
+  });
 
-    // Certificate Management State
-    const [selectedCohortId, setSelectedCohortId] = useState<string>("");
+  const mutation = useMutation({
+    mutationFn: async (data: EnrollmentFormValues) => {
+        return api.post("/enrollments", data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["enrollments"] });
+      setIsOpen(false);
+      form.reset();
+    },
+    onError: (err: any) => {
+        alert(err.response?.data?.message || "Error al matricular");
+    }
+  });
 
-    const { data: enrollments, isLoading: loadingEnrollments } = useQuery({
-        queryKey: ["enrollments", selectedCohortId],
-        queryFn: () => fetchCohortEnrollments(selectedCohortId),
-        enabled: !!selectedCohortId
-    });
 
-    const form = useForm<CreateEnrollmentDto>({
-        resolver: zodResolver(CreateEnrollmentSchema),
-        defaultValues: { studentId: "", cohortId: "" }
-    });
+  return (
+    <RoleGuard allowedRoles={["ADMIN"]}>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-3xl font-bold">Gestión de Matrículas</h1>
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+          <DialogTrigger asChild>
+            <Button className="bg-[#25D366] text-black hover:bg-[#1fb554]">
+              <UserPlus className="mr-2 h-4 w-4" /> Nueva Matrícula
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="bg-zinc-950 border-zinc-800 text-white">
+            <DialogHeader>
+              <DialogTitle>Matricular Estudiante</DialogTitle>
+            </DialogHeader>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit((data) => mutation.mutate(data))} className="space-y-4">
+                 <FormField
+                  control={form.control}
+                  name="studentId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Estudiante</FormLabel>
+                       <Select onValueChange={field.onChange} defaultValue={field.value}>
+                         <FormControl>
+                           <SelectTrigger className="bg-zinc-900 border-zinc-800"><SelectValue placeholder="Buscar estudiante" /></SelectTrigger>
+                         </FormControl>
+                         <SelectContent className="bg-zinc-900 border-zinc-800 max-h-60 overflow-y-auto">
+                             {students.map((s: any) => (
+                                 <SelectItem key={s.studentProfile.id} value={s.studentProfile.id}>
+                                     {s.fullName} ({s.email})
+                                 </SelectItem>
+                             ))}
+                         </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                 <FormField
+                  control={form.control}
+                  name="cohortId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Cohorte (Grupo)</FormLabel>
+                       <Select onValueChange={field.onChange} defaultValue={field.value}>
+                         <FormControl>
+                           <SelectTrigger className="bg-zinc-900 border-zinc-800"><SelectValue placeholder="Seleccionar grupo" /></SelectTrigger>
+                         </FormControl>
+                         <SelectContent className="bg-zinc-900 border-zinc-800 max-h-60 overflow-y-auto">
+                             {cohorts?.map((c: any) => (
+                                 <SelectItem key={c.id} value={c.id}>
+                                     {c.name} - {c.course.title} ({c.campus.name})
+                                 </SelectItem>
+                             ))}
+                         </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <Button type="submit" className="w-full bg-[#25D366] text-black">
+                    {mutation.isLoading ? "Procesando..." : "Matricular"}
+                </Button>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
+      </div>
 
-    const createMutation = useMutation({
-        mutationFn: createEnrollment,
-        onSuccess: () => {
-            alert("Estudiante matriculado con éxito");
-            form.reset();
-            queryClient.invalidateQueries({ queryKey: ["enrollments"] });
-        },
-        onError: (err: any) => alert(err.response?.data?.message || "Error al matricular")
-    });
-
-    const issueMutation = useMutation({
-        mutationFn: issueCertificate,
-        onSuccess: () => {
-            alert("Certificado emitido");
-            queryClient.invalidateQueries({ queryKey: ["enrollments"] });
-        },
-        onError: (err: any) => alert(err.response?.data?.message || "Error al emitir")
-    });
-    
-    // Revoke
-    // To revoke I need cert ID. Fetching enrollment should include cert?
-    // I'll skip Revoke UI for now unless I update backend to return certs in `findByCohort`.
-    // Actually, `EnrollmentsService` is easy to check.
-
-    const onSubmit = (data: CreateEnrollmentDto) => createMutation.mutate(data);
-
-    return (
-        <RoleGuard allowedRoles={["ADMIN"]}>
-            <div className="space-y-12">
-                <div>
-                    <h1 className="mb-8 text-3xl font-bold">Gestión de Matrículas</h1>
-                    <div className="flex justify-center">
-                        <Card className="w-full max-w-lg bg-zinc-900 border-zinc-800 text-white">
-                            <CardHeader>
-                                <CardTitle>Inscribir Estudiante</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <Form {...form}>
-                                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                                        <FormField control={form.control} name="studentId" render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Estudiante</FormLabel>
-                                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                    <FormControl><SelectTrigger className="bg-zinc-950 border-zinc-700"><SelectValue placeholder="Seleccionar estudiante" /></SelectTrigger></FormControl>
-                                                    <SelectContent className="bg-zinc-950 border-zinc-700 text-white">
-                                                        {loadingStudents ? <SelectItem value="loading">Cargando...</SelectItem> : 
-                                                            students?.map((s: any) => (
-                                                                <SelectItem key={s.id} value={s.studentProfile?.id || "no-profile"}>
-                                                                    {s.fullName} ({s.email})
-                                                                </SelectItem>
-                                                            ))
-                                                        }
-                                                    </SelectContent>
-                                                </Select>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )} />
-
-                                        <FormField control={form.control} name="cohortId" render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Cohort (Curso - Sede)</FormLabel>
-                                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                    <FormControl><SelectTrigger className="bg-zinc-950 border-zinc-700"><SelectValue placeholder="Seleccionar cohort" /></SelectTrigger></FormControl>
-                                                    <SelectContent className="bg-zinc-950 border-zinc-700 text-white">
-                                                        {loadingCohorts ? <SelectItem value="loading">Cargando...</SelectItem> :
-                                                            cohorts?.map((c: any) => (
-                                                                <SelectItem key={c.id} value={c.id}>
-                                                                    {c.course?.title} - {c.name}
-                                                                </SelectItem>
-                                                            ))
-                                                        }
-                                                    </SelectContent>
-                                                </Select>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )} />
-
-                                        <Button type="submit" className="w-full bg-[#25D366] text-black font-bold">
-                                            {createMutation.isLoading ? "Procesando..." : "Matricular"}
-                                        </Button>
-                                    </form>
-                                </Form>
-                            </CardContent>
-                        </Card>
-                    </div>
-                </div>
-
-                <div>
-                    <h2 className="text-2xl font-bold mb-4">Certificados y Lista de Clase</h2>
-                    <div className="flex gap-4 mb-4">
-                         <Select onValueChange={setSelectedCohortId} value={selectedCohortId}>
-                            <SelectTrigger className="w-[300px] bg-zinc-900 border-zinc-700 text-white"><SelectValue placeholder="Seleccionar Cohort para ver lista" /></SelectTrigger>
-                            <SelectContent className="bg-zinc-900 border-zinc-700 text-white">
-                                {cohorts?.map((c: any) => (
-                                    <SelectItem key={c.id} value={c.id}>{c.course?.title} - {c.name}</SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-
-                    {selectedCohortId && (
-                        <Card className="bg-zinc-900 border-zinc-800 text-white">
-                             <CardContent className="pt-6">
-                                {loadingEnrollments ? <p>Cargando lista...</p> : (
-                                    <Table>
-                                        <TableHeader>
-                                            <TableRow className="border-zinc-800">
-                                                <TableHead>Estudiante</TableHead>
-                                                <TableHead>Estado</TableHead>
-                                                <TableHead className="text-right">Certificado</TableHead>
-                                            </TableRow>
-                                        </TableHeader>
-                                        <TableBody>
-                                            {enrollments?.map((enrollment: any) => (
-                                                <TableRow key={enrollment.id} className="border-zinc-800">
-                                                    <TableCell>{enrollment.student?.user?.fullName}</TableCell>
-                                                    <TableCell><Badge variant="outline">{enrollment.status}</Badge></TableCell>
-                                                    <TableCell className="text-right">
-                                                        <Button 
-                                                            variant="outline" size="sm" 
-                                                            className="border-yellow-600 text-yellow-500 hover:bg-yellow-900/20"
-                                                            onClick={() => issueMutation.mutate(enrollment.id)}
-                                                            disabled={issueMutation.isLoading}
-                                                        >
-                                                            Emitir Certificado
-                                                        </Button>
-                                                    </TableCell>
-                                                </TableRow>
-                                            ))}
-                                            {enrollments?.length === 0 && <TableRow><TableCell colSpan={3} className="text-center">No hay estudiantes.</TableCell></TableRow>}
-                                        </TableBody>
-                                    </Table>
-                                )}
-                             </CardContent>
-                        </Card>
-                    )}
-                </div>
-            </div>
-        </RoleGuard>
-    );
+      <div className="rounded-md border border-zinc-800">
+          <Table>
+              <TableHeader className="bg-zinc-900">
+                  <TableRow className="border-zinc-800 hover:bg-zinc-900">
+                      <TableHead>Estudiante</TableHead>
+                      <TableHead>Curso</TableHead>
+                      <TableHead>Cohorte</TableHead>
+                      <TableHead>Sede</TableHead>
+                      <TableHead>Fecha Matricula</TableHead>
+                      <TableHead>Estado</TableHead>
+                  </TableRow>
+              </TableHeader>
+              <TableBody>
+                  {isLoading ? <TableRow><TableCell colSpan={6} className="text-center">Cargando...</TableCell></TableRow> :
+                   enrollments?.map((e: any) => (
+                       <TableRow key={e.id} className="border-zinc-800 hover:bg-zinc-900">
+                           <TableCell className="font-medium">
+                               <div>{e.student.user.fullName}</div>
+                               <div className="text-xs text-zinc-500">{e.student.user.email}</div>
+                           </TableCell>
+                           <TableCell>{e.cohort.course.title}</TableCell>
+                           <TableCell>{e.cohort.name}</TableCell>
+                           <TableCell>{e.cohort.campus.name}</TableCell>
+                           <TableCell>{format(new Date(e.enrolledAt), 'dd/MM/yyyy')}</TableCell>
+                           <TableCell>
+                               <span className={`px-2 py-1 rounded text-xs font-bold ${e.status === 'ACTIVE' ? 'bg-green-900 text-green-300' : 'bg-red-900 text-red-300'}`}>
+                                   {e.status}
+                               </span>
+                           </TableCell>
+                       </TableRow>
+                   ))}
+              </TableBody>
+          </Table>
+      </div>
+    </RoleGuard>
+  );
 }

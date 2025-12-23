@@ -65,6 +65,8 @@ export class UsersService {
         role: true,
         isActive: true,
         createdAt: true,
+        studentProfile: { select: { id: true } },
+        teacherProfile: { select: { id: true } }
       }
     });
   }

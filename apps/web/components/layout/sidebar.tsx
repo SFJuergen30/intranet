@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useAuth } from "@/context/auth-context";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, BookOpen, GraduationCap, CalendarCheck, LogOut, TrendingUp, Library, CreditCard } from "lucide-react";
+import { LayoutDashboard, Users, BookOpen, GraduationCap, CalendarCheck, LogOut, TrendingUp, Library, CreditCard, MapPin } from "lucide-react";
 
 export function Sidebar() {
   const { user, logout } = useAuth();
@@ -25,15 +25,19 @@ export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
     { name: "Dashboard", href: "/admin", icon: LayoutDashboard, roles: ["ADMIN"] },
     { name: "Usuarios", href: "/admin/users", icon: Users, roles: ["ADMIN"] },
     { name: "Cursos", href: "/admin/courses", icon: BookOpen, roles: ["ADMIN"] },
+    { name: "Grupos", href: "/admin/cohorts", icon: Users, roles: ["ADMIN"] },
+    { name: "Sedes", href: "/admin/campuses", icon: MapPin, roles: ["ADMIN"] },
     { name: "Matrícula", href: "/admin/enrollments", icon: CalendarCheck, roles: ["ADMIN"] },
     
     { name: "Mis Grupos", href: "/teacher", icon: Users, roles: ["TEACHER"] },
     { name: "Mis Cursos", href: "/student", icon: BookOpen, roles: ["STUDENT"] },
+    { name: "Pagos", href: "/student/payments", icon: CreditCard, roles: ["STUDENT"] },
+    { name: "Horario", href: "/student/schedule", icon: CalendarCheck, roles: ["STUDENT"] },
+    { name: "Programas", href: "/student/courses", icon: BookOpen, roles: ["STUDENT"] },
+    { name: "Sedes", href: "/student/campuses", icon: MapPin, roles: ["STUDENT"] },
+    { name: "Recursos", href: "/student/resources", icon: Library, roles: ["STUDENT"] },
     { name: "Mis Notas", href: "/student/grades", icon: GraduationCap, roles: ["STUDENT"] },
     { name: "Mi Progreso", href: "/student/progress", icon: TrendingUp, roles: ["STUDENT"] },
-    { name: "Recursos", href: "/student/resources", icon: Library, roles: ["STUDENT"] },
-    { name: "Horario", href: "/student/schedule", icon: CalendarCheck, roles: ["STUDENT"] },
-    { name: "Pagos", href: "/student/payments", icon: CreditCard, roles: ["STUDENT"] },
   ];
 
   const filteredLinks = links.filter(link => user && link.roles.includes(user.role));

@@ -6,6 +6,16 @@ import { CreateEnrollmentDto } from '@repo/shared';
 export class EnrollmentsService {
   constructor(private prisma: PrismaService) {}
 
+  async findAll() {
+      return this.prisma.enrollment.findMany({
+          include: {
+              student: { include: { user: true } },
+              cohort: { include: { course: true, campus: true } }
+          },
+          orderBy: { enrolledAt: 'desc' }
+      });
+  }
+
   async create(data: CreateEnrollmentDto) {
     // Check occupancy
     const cohort = await this.prisma.cohort.findUnique({

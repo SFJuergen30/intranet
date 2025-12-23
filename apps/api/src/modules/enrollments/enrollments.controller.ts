@@ -17,6 +17,12 @@ export class EnrollmentsController {
     return this.enrollmentsService.create(createDto);
   }
 
+  @Get()
+  @Roles('ADMIN')
+  findAll() {
+      return this.enrollmentsService.findAll();
+  }
+
   @Get('my-enrollments')
   @Roles('STUDENT')
   findMyEnrollments(@Request() req) {
